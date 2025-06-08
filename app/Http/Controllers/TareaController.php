@@ -41,12 +41,34 @@ class TareaController extends Controller
                          ->with('success', 'Tarea eliminada correctamente.');
     }
 
+    public function edit(Tarea $tarea)
+    {
+        return view('tareas.edit', compact('tarea'));
+    }
+
     public function update(Request $request, Tarea $tarea)
     {
-        $tarea->completada = true;
+        // Si el formulario viene con el campo oculto "completar", se marca como completada
+        if ($request->has('completar')) {
+            $tarea->completada = true;
+            $tarea->save();
+
+            return redirect()->route('tareas.index')
+                             ->with('success', 'Tarea marcada como completada.');
+        }
+
+        // Si no vino para completar, se actualizan los datos
+        $request->validate([
+            'titulo' => 'required|string|max:255',
+            'descripcion' => 'required|string',
+        ]);
+
+        $tarea->titulo = $request->titulo;
+        $tarea->descripcion = $request->descripcion;
         $tarea->save();
 
         return redirect()->route('tareas.index')
-                         ->with('success', 'Tarea marcada como completada.');
+                         ->with('success', 'Tarea actualizada correctamente.');
     }
 }
+

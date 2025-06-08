@@ -25,19 +25,28 @@
                     <td>{{ $tarea->descripcion }}</td>
                     <td class="text-center">{{ $tarea->completada ? 'Completada' : 'Pendiente' }}</td>
                     <td class="text-center">
+
+                        @if (!$tarea->completada)
+                            <form action="{{ route('tareas.update', $tarea->id) }}" method="POST" style="display:inline;">
+                                @csrf
+                                @method('PUT')
+                                <input type="hidden" name="completar" value="1">
+                                <button type="submit">Marcar como completada</button>
+                            </form>
+                        @endif
+
+                        @if (!$tarea->completada)
+                            <a href="{{ route('tareas.edit', $tarea->id) }}" style="display:inline-block; margin-right: 5px;">
+                                <button type="button">Editar</button>
+                            </a>
+                        @endif
+
                         <form action="{{ route('tareas.destroy', $tarea->id) }}" method="POST" style="display:inline;">
                             @csrf
                             @method('DELETE')
                             <button type="submit">Eliminar</button>
                         </form>
 
-                        @if (!$tarea->completada)
-                            <form action="{{ route('tareas.update', $tarea->id) }}" method="POST" style="display:inline;">
-                                @csrf
-                                @method('PUT')
-                                <button type="submit">Marcar como completada</button>
-                            </form>
-                        @endif
                     </td>
                 </tr>
             @endforeach
